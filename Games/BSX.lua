@@ -17,6 +17,7 @@ local CurrentSelected;
 local AmountToHatchAtATime = 3;
 local EggAutoOpen = false
 local Pets;
+local Void = false
 local AutoUpgrade;
 
 for _,v in pairs(game:GetService("ReplicatedStorage").assetObjects.eggs:GetChildren()) do 
@@ -92,7 +93,7 @@ Tab:Dropdown{
 }
 
 Tab:Dropdown{
-    Name = "Select Egg ( Void only )",
+    Name = "Select Egg",
     StartingText = "Select...",
     Description = nil,
     Items = Eggs,
@@ -107,6 +108,14 @@ Tab:Toggle{
     Description = nil,
     Callback = function(state)
         EggAutoOpen = state
+    end
+}
+Tab:Toggle{
+    Name = "Void egg",
+    StartingState = false,
+    Description = nil,
+    Callback = function(state)
+        Void = state
     end
 }
 Tab:Toggle{
@@ -143,7 +152,7 @@ task.spawn(function()
         game:GetService("RunService").Heartbeat:Wait() 
         if Toggled then
             local args = {
-                [1] = workspace.npcs:FindFirstChild(Pets[math.random(#Pets)])
+                [1] = workspace.npcs:FindFirstChild(Pets[math.random(#Pets)]) --List["Bans"][math.random(#List["Bans"])]
             }
             game:GetService("ReplicatedStorage").rbxts_include.node_modules:FindFirstChild("@rbxts").net.out._NetManaged.damageNPC:FireServer(unpack(args))  
         end  
@@ -154,9 +163,10 @@ task.spawn(function()
         if EggAutoOpen then 
             local args = {
                 [1] = "F196388E-0A95-490F-B137-0495057A031B",
-                [2] = {[1] = AmountToHatchAtATime,[2] = CurrentSelected,[3] = true}
+                [2] = {[1] = AmountToHatchAtATime,[2] = CurrentSelected,[3] = Void}
             }
             game:GetService("ReplicatedStorage").rbxts_include.node_modules:FindFirstChild("@rbxts").net.out._NetManaged:FindFirstChild("eggs/hatchEgg"):FireServer(unpack(args))
         end
     end)
 end)
+
